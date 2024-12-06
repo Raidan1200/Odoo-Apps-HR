@@ -229,12 +229,14 @@ class HrLeave(models.Model):
 
     def action_confirm(self):
         res = super().action_confirm()
-        self.create_attendances()
+        if not self.attendance_ids:
+            self.create_attendances()
         return res
 
     def action_approve(self):
         res = super().action_approve()
-        self.create_attendances()
+        if not self.attendance_ids:
+            self.create_attendances()
         return res
 
     def action_draft(self):
