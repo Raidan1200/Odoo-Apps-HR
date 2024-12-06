@@ -20,7 +20,8 @@ class HRLeaveType(models.Model):
     )
     calendar_max_hours = fields.Integer(
         default=0,
-        help="""If leave hours is greater than this value, the employee calendar will be used. Set to 0 to disable.""",
+        help="""If leave hours is greater than this value,
+            the employee calendar will be used. Set to 0 to disable.""",
     )
 
     @api.constrains()

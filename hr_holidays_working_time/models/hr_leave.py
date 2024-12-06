@@ -102,6 +102,12 @@ class HrLeave(models.Model):
         )
         return work_hour_id.hour_from
 
+    def _get_leaves_on_public_holiday(self):
+        """
+        Overwrite method to allow leaves on public holiday.
+        """
+        return False
+
     @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
