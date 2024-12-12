@@ -108,12 +108,12 @@ class HrLeave(models.Model):
         """
         return False
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        if res.state in ["confirm", "validate1", "validate2"]:
-            res.create_attendances()
-        return res
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     res = super().create(vals_list)
+    #     if res.state in ["validate1", "validate2"] and not res.attendance_ids:
+    #         res.create_attendances()
+    #     return res
 
     def create_attendances(self):
         """
@@ -227,21 +227,22 @@ class HrLeave(models.Model):
             # _logger.warning(attendance_vals)
             self.env["hr.attendance"].sudo().create(attendance_vals)
 
-    def action_confirm(self):
-        res = super().action_confirm()
-        if not self.attendance_ids:
-            self.create_attendances()
+    def unlink(self):
+        self.sudo().attendance_ids.unlink()
+        return super().unlink()
+
+    def action_draft(self):
+        res = super().action_draft()
+        self.sudo().attendance_ids.unlink()
         return res
+
+    def action_confirm(self):
+        return super().action_confirm()
 
     def action_approve(self):
         res = super().action_approve()
         if not self.attendance_ids:
             self.create_attendances()
-        return res
-
-    def action_draft(self):
-        res = super().action_draft()
-        self.sudo().attendance_ids.unlink()
         return res
 
     def action_refuse(self):
@@ -253,7 +254,3 @@ class HrLeave(models.Model):
         res = super().action_cancel_leave()
         self.sudo().attendance_ids.unlink()
         return res
-
-    def unlink(self):
-        self.sudo().attendance_ids.unlink()
-        return super().unlink()
