@@ -21,7 +21,7 @@ class HrAtttendanceOvertime(models.Model):
     @api.depends("duration")
     def _compute_policies(self):
         rule_ids = self.env["hr.attendance.rule"].search([])
-        for overtime in self:
+        for overtime in self.filtered("date"):
 
             # Get attendance records of overtime date
             checkin_from = datetime.combine(overtime.date, time.min)
